@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web
+  labels:
+    name: web
+spec:
+  containers:
+    - name: web
+      image: slaiv/otus:kubernetes-intro-web-1.0
+      resources:
+        limits:
+          memory: "128Mi"
+          cpu: "500m"
+      ports:
+        - containerPort: 8000
+      volumeMounts:
+        - name: app
+          mountPath: /app
+  initContainers:
+    - name: init-web
+      image: busybox:1.36.0
+      resources:
+        limits:
+          memory: "128Mi"
+          cpu: "500m"
+      command: ['sh', '-c', 'wget -O- https://tinyurl.com/otus-k8s-intro | sh']
+      volumeMounts:
+        - name: app
+          mountPath: /app
+  volumes:
+    - name: app
+      emptyDir: {}
